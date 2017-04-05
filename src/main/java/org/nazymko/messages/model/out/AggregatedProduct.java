@@ -6,11 +6,13 @@ import java.util.List;
 /**
  * Created by nazymko.patronus@gmail.com
  */
-public class Product {
+public class AggregatedProduct {
 
     private String productId;
+    private List<Request> buyLevels;
+    private List<Request> sellLevels;
 
-    public Product(String productId) {
+    public AggregatedProduct(String productId) {
         this.productId = productId;
         this.buyLevels = new LinkedList<Request>();
         this.sellLevels = new LinkedList<Request>();
@@ -27,8 +29,5 @@ public class Product {
     public List<Request> getSellLevels() {
         return sellLevels;
     }
-
-    private List<Request> buyLevels;
-    private List<Request> sellLevels;
 
 }

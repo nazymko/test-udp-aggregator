@@ -9,20 +9,15 @@ import java.util.List;
  */
 public class Product {
     private String productId;
-    private HashMap<Long, Order> orders;
     private List<Order> buyLevels;
     private List<Order> sellLevels;
 
     public Product(String productId) {
         this.productId = productId;
-        this.orders = new HashMap<Long, Order>();
         this.buyLevels = new LinkedList<Order>();
         this.sellLevels = new LinkedList<Order>();
     }
 
-    public HashMap<Long, Order> getOrders() {
-        return orders;
-    }
 
     public String getProductId() {
         return productId;
@@ -36,7 +31,14 @@ public class Product {
         return sellLevels;
     }
 
-    public void registerOrder(long orderId, Order order) {
-        orders.put(orderId, order);
+    public void detach(Order order) {
+        switch (order.getSide()) {
+            case sell:
+                sellLevels.remove(order);
+                break;
+            case buy:
+                buyLevels.remove(order);
+                break;
+        }
     }
 }

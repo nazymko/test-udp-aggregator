@@ -12,10 +12,13 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class Aggregator {
 
-    private LinkedBlockingQueue<String> rawStorage = new LinkedBlockingQueue<String>();
+    protected HashMap<String, Product> aggregated = new HashMap<String, Product>();
+    protected HashMap<Long, Order> orders = new HashMap<Long, Order>();
+    protected LinkedBlockingQueue<String> rawStorage = new LinkedBlockingQueue<String>();
 
-    HashMap<String, Product> aggregated = new HashMap<String, Product>();
-    HashMap<Long, Order> orders = new HashMap<Long, Order>();
+    public HashMap<String, Product> getAggregated() {
+        return aggregated;
+    }
 
     public void addRaw(String udpMessage) {
         rawStorage.add(udpMessage);
@@ -43,7 +46,15 @@ public class Aggregator {
     }
 
     private void deleteOrderAction(Message msg) {
+        if (orders.containsKey(msg.getOrderId())) {
+            Order order = orders.get(msg.getOrderId());
 
+            order.getParent().detach(order);
+            orders.remove(msg.getOrderId());
+
+        } else {
+            System.err.println("Order not found. Id : " + msg.getOrderId());
+        }
     }
 
     private void addOrderAction(Message msg) {
@@ -54,7 +65,14 @@ public class Aggregator {
 
         final Product product = aggregated.get(msg.getProductId());
 
-        final Order order = new Order(msg.getPrice(), msg.getQuantity(), msg.getOrderId());
+        final Order order = new Order(
+                product,
+                msg.getPrice(),
+                msg.getQuantity(),
+                msg.getOrderId(),
+                msg.getSide()
+        );
+
         switch (msg.getSide()) {
             case sell:
                 product.getSellLevels().add(order);
@@ -64,13 +82,16 @@ public class Aggregator {
                 break;
         }
         orders.put(msg.getOrderId(), order);
-        product.registerOrder(msg.getOrderId(), order);
 
     }
 
     private void changeOrderAction(Message msg) {
         if (orders.containsKey(msg.getOrderId())) {
             final Order order = orders.get(msg.getOrderId());
+
+            order.setPrice(msg.getPrice());
+            order.setQuantity(msg.getQuantity());
+
         } else {
             System.err.println("Order not found. Id : " + msg.getOrderId());
         }

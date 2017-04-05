@@ -49,4 +49,25 @@ public interface TestConstants {
             "    }\n" +
             "  ]" +
             "}";
+
+    String INCOME_MESSAGE_DELETE_SINGLE_SELL = "{\n" +
+            "  \"inSequenceNumber\": 3,\n" +
+            "  \"messages\": [\n" +
+            "    {\n" +
+            "      \"type\": \"deleteOrder\",\n" +
+            "      \"orderId\": 3\n" +
+            "    }\n" +
+            "  ]" +
+            "}";
+    String INCOME_MESSAGE_CHANGE_SINGLE_SELL = "{\n" +
+            "  \"inSequenceNumber\": 4,\n" +
+            "  \"messages\": [\n" +
+            "    {\n" +
+            "      \"type\": \"changeOrder\",\n" +
+            "      \"orderId\": 3,\n" +
+            "      \"price\": 3.333,\n" +
+            "      \"quantity\": 10\n" +
+            "    }\n" +
+            "  ]" +
+            "}";
 }

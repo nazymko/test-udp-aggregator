@@ -1,23 +1,38 @@
 package org.nazymko.storage;
 
+import org.nazymko.messages.model.in.Message;
+
 import java.math.BigDecimal;
 
 /**
  * Created by nazymko.patronus@gmail.com
  */
 public class Order {
-    BigDecimal price;
-    long quantity;
-    long orderId;
+    private final long orderId;
+    private Message.Side side;
+    private Product parent;
+    private BigDecimal price;
+    private long quantity;
 
-    public Order(BigDecimal price, long quantity, long orderId) {
+    public Order(Product product, BigDecimal price, long quantity, long orderId, Message.Side side) {
+        this.parent = product;
         this.price = price;
         this.quantity = quantity;
         this.orderId = orderId;
+        this.side = side;
     }
 
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
+    public Product getParent() {
+        return parent;
+    }
 
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -32,5 +47,21 @@ public class Order {
     @Override
     public int hashCode() {
         return (int) (orderId ^ (orderId >>> 32));
+    }
+
+    public long getOrderId() {
+        return orderId;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public long getQuantity() {
+        return quantity;
+    }
+
+    public Message.Side getSide() {
+        return side;
     }
 }
