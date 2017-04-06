@@ -53,6 +53,7 @@ public class EmulatorTask implements Runnable {
                                 Config.PORT
                         )
                 );
+//                Thread.sleep(10);
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -26,10 +26,10 @@ public class Aggregator {
         System.out.println(" ------------INFO-------------- ");
     }
 
-    protected LinkedBlockingQueue<String> rawStorage = new LinkedBlockingQueue<String>();
+    private LinkedBlockingQueue<String> rawStorage = new LinkedBlockingQueue<String>();
 
-    protected HashMap<String, Product> aggregated = new HashMap<String, Product>();
-    protected HashMap<Long, Order> orders = new HashMap<Long, Order>();
+    private HashMap<String, Product> aggregated = new HashMap<String, Product>();
+    HashMap<Long, Order> orders = new HashMap<Long, Order>();
     protected AtomicLong duplicateCounter = new AtomicLong(0);
     private final Set<Long> processed = new TreeSet<>();
 

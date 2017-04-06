@@ -10,7 +10,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Date;
-import java.util.Objects;
 
 import static java.lang.Thread.sleep;
 
@@ -78,7 +77,7 @@ public class DataProducer implements Runnable {
 
                 final long timeToWait = INTERVAL - timeGoneFromLastExecution;
 
-                System.out.println(timeNow() + "timeToWait = " + timeToWait);
+                System.out.println(timeNow() + "Sleep for " + timeToWait + " ms");
 
                 if (timeToWait > 0) {
                     Thread.sleep(timeToWait);
