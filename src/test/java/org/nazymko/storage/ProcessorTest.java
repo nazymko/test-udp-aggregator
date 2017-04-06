@@ -49,8 +49,8 @@ public class ProcessorTest {
 
 
         System.out.println("Going to take item");
-        String take = InjectionReplacement.AGGREGATOR.getRawStorage().take();
-        System.out.println("Taken : " + take);
+        MetricsHolder.MeasurementObject take = InjectionReplacement.AGGREGATOR.getRawStorage().take();
+        System.out.println("Taken : " + take.getRaw());
 
         Assertions.assertThat(take).isEqualTo("test");
 

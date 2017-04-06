@@ -44,7 +44,6 @@ public class DataProducer implements Runnable {
         try {
             if (timeHasCome(checkPoint)) {
                 checkPoint = System.currentTimeMillis();
-                InjectionReplacement.AGGREGATOR.info();
 
                 long measurement = System.nanoTime();
 
@@ -99,7 +98,7 @@ public class DataProducer implements Runnable {
 
     private void safeSend(byte[] dataToSend) throws IOException {
         try {
-            if (dataToSend.length < 1024 * 64) {
+            if (dataToSend.length < (1024 * 64) - 1) {
                 out.send(
                         new DatagramPacket(
                                 dataToSend,
@@ -108,7 +107,7 @@ public class DataProducer implements Runnable {
                                 Config.OUT_PORT
                         ));
             } else {
-                System.err.println("Message too big to be send over UDP.");
+                System.err.println("\nMessage too big to be send over UDP.\n");
 
             }
         } catch (SocketException exception) {

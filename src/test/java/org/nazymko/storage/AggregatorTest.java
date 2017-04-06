@@ -7,8 +7,6 @@ import org.nazymko.messages.model.in.Envelope;
 
 import java.math.BigDecimal;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by nazymko.patronus@gmail.com
  */
@@ -20,7 +18,7 @@ public class AggregatorTest {
         Assertions.assertThat(envelopeAddSell.getInSequenceNumber()).isEqualTo(2);
         Assertions.assertThat(envelopeAddSell.getMessages()).hasSize(1);
 
-        InjectionReplacement.AGGREGATOR.consume(envelopeAddSell);
+        InjectionReplacement.AGGREGATOR.consume(new MetricsHolder.MeasurementObject(envelopeAddSell));
 
 
         Assertions.assertThat(InjectionReplacement.AGGREGATOR.getAggregated()).containsKeys("APPLE");
@@ -32,7 +30,7 @@ public class AggregatorTest {
 
         final Envelope envelopeDeleteSell = InjectionReplacement.GSON.fromJson(TestConstants.INCOME_MESSAGE_DELETE_SINGLE_SELL, Envelope.class);
 
-        InjectionReplacement.AGGREGATOR.consume(envelopeDeleteSell);
+        InjectionReplacement.AGGREGATOR.consume(new MetricsHolder.MeasurementObject(envelopeDeleteSell));
 
         Assertions.assertThat(InjectionReplacement.AGGREGATOR.getAggregated()).containsKeys("APPLE");
         Assertions.assertThat(InjectionReplacement.AGGREGATOR.getAggregated().get("APPLE").getBuyLevels()).hasSize(0);
@@ -51,7 +49,7 @@ public class AggregatorTest {
         Assertions.assertThat(envelopeAddSell.getInSequenceNumber()).isEqualTo(2);
         Assertions.assertThat(envelopeAddSell.getMessages()).hasSize(1);
 
-        InjectionReplacement.AGGREGATOR.consume(envelopeAddSell);
+        InjectionReplacement.AGGREGATOR.consume(new MetricsHolder.MeasurementObject(envelopeAddSell));
 
 
         Assertions.assertThat(InjectionReplacement.AGGREGATOR.getAggregated()).containsKeys("APPLE");
@@ -64,7 +62,7 @@ public class AggregatorTest {
 
         final Envelope envelopeDeleteSell = InjectionReplacement.GSON.fromJson(TestConstants.INCOME_MESSAGE_CHANGE_SINGLE_SELL, Envelope.class);
 
-        InjectionReplacement.AGGREGATOR.consume(envelopeDeleteSell);
+        InjectionReplacement.AGGREGATOR.consume(new MetricsHolder.MeasurementObject(envelopeDeleteSell));
 
         Assertions.assertThat(InjectionReplacement.AGGREGATOR.getAggregated()).containsKeys("APPLE");
         Assertions.assertThat(InjectionReplacement.AGGREGATOR.getAggregated().get("APPLE").getBuyLevels()).hasSize(0);

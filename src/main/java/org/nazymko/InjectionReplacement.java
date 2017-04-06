@@ -3,10 +3,10 @@ package org.nazymko;
 import com.google.gson.Gson;
 import org.nazymko.storage.Aggregator;
 import org.nazymko.storage.MessageSorter;
+import org.nazymko.storage.MetricsHolder;
 import org.nazymko.storage.UnknownOrdersStorage;
 import org.nazymko.workers.strategies.RequestSorted;
 
-import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -22,5 +22,6 @@ public class InjectionReplacement {
     public static MessageSorter MESSAGE_SORTER = new MessageSorter();
     public static RequestSorted REQUEST_ASC_SORTER = new RequestSorted(RequestSorted.SortOrder.ASC);
     public static RequestSorted REQUEST_DESC_SORTER = new RequestSorted(RequestSorted.SortOrder.DESC);
+    public static MetricsHolder METRIC_HOLDER = new MetricsHolder();
 
 }

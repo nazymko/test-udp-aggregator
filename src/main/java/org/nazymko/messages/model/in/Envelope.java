@@ -6,7 +6,7 @@ import java.util.List;
  * Created by nazymko.patronus@gmail.com
  */
 public class Envelope {
-    public long getInSequenceNumber() {
+    public Long getInSequenceNumber() {
         return inSequenceNumber;
     }
 

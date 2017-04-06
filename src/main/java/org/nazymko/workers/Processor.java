@@ -2,6 +2,7 @@ package org.nazymko.workers;
 
 import org.nazymko.InjectionReplacement;
 import org.nazymko.messages.model.in.Envelope;
+import org.nazymko.storage.MetricsHolder;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -14,15 +15,20 @@ public class Processor implements Runnable {
     @Override
     public void run() {
 
-        LinkedBlockingQueue<String> rawStorage = InjectionReplacement.AGGREGATOR.getRawStorage();
+        LinkedBlockingQueue<MetricsHolder.MeasurementObject> rawStorage = InjectionReplacement.AGGREGATOR.getRawStorage();
 
         while (true) {
             try {
-                String message = rawStorage.take();
+                MetricsHolder.MeasurementObject message = rawStorage.take();
 
-                Envelope envelope = InjectionReplacement.GSON.fromJson(message, Envelope.class);
-                InjectionReplacement.AGGREGATOR.consume(envelope);
+                message.setParsingStartAt(System.nanoTime());
+                Envelope parsed = InjectionReplacement.GSON.fromJson(message.getRaw(), Envelope.class);
+                message.setParsingFinishedAt(System.nanoTime());
 
+                message.setEnvelope(parsed);
+                if (isValid(message)) {
+                    InjectionReplacement.AGGREGATOR.consume(message);
+                }
 
             } catch (Throwable any) {
                 InjectionReplacement.AGGREGATOR.onParsingError(any);
@@ -30,5 +36,12 @@ public class Processor implements Runnable {
                 any.printStackTrace();
             }
         }
+    }
+
+    private boolean isValid(MetricsHolder.MeasurementObject message) {
+        if (message.getEnvelope() == null || message.getEnvelope().getInSequenceNumber() == null || message.getEnvelope().getMessages() == null || message.getEnvelope().getMessages().isEmpty()) {
+            return false;
+        }
+        return true;
     }
 }
