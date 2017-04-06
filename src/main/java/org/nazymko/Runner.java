@@ -18,7 +18,7 @@ public class Runner {
         socket = new DatagramSocket(Config.PORT);
         InjectionReplacement.EXECUTOR.submit(new NetworkListener(socket));
 
-        InjectionReplacement.EXECUTOR.submit(new Processor());
+//        InjectionReplacement.EXECUTOR.submit(new Processor());
         InjectionReplacement.EXECUTOR.submit(new Processor());
 
         InjectionReplacement.EXECUTOR.submit(new DataProducer(new DatagramSocket(Config.OUT_PORT)));

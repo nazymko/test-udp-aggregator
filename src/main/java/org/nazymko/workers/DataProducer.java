@@ -19,12 +19,11 @@ import static java.lang.Thread.sleep;
 public class DataProducer implements Runnable {
     public static final long INTERVAL = 2000L;
     private DatagramSocket out;
+    private Long checkPoint = 0L;
 
     public DataProducer(DatagramSocket in) {
         this.out = in;
     }
-
-    private Long checkPoint = 0L;
 
     @Override
     public void run() {
@@ -53,7 +52,6 @@ public class DataProducer implements Runnable {
                 final Object apply = new DefaultAggregation().apply(InjectionReplacement.AGGREGATOR);
                 final String jsonData = InjectionReplacement.GSON.toJson(apply);
                 final long aggregation = System.nanoTime() - measurement;
-                System.out.println("jsonData = " + jsonData);
                 System.out.println(timeNow() + "Aggregation : \t" + aggregation + " ns.");
 
                 final byte[] dataToSend = jsonData.getBytes();
@@ -85,6 +83,7 @@ public class DataProducer implements Runnable {
             }
         } catch (Throwable any) {
             System.out.println("Unexpected exception : " + firstNotNull(any.getLocalizedMessage(), any.getMessage()));
+            any.printStackTrace();
         }
     }
 

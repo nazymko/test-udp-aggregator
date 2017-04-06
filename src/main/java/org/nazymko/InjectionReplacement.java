@@ -22,4 +22,5 @@ public class InjectionReplacement {
     public static MessageSorter MESSAGE_SORTER = new MessageSorter();
     public static RequestSorted REQUEST_ASC_SORTER = new RequestSorted(RequestSorted.SortOrder.ASC);
     public static RequestSorted REQUEST_DESC_SORTER = new RequestSorted(RequestSorted.SortOrder.DESC);
+
 }

@@ -1,5 +1,6 @@
 package org.nazymko.storage;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,11 +34,17 @@ public class Product {
     public void detach(Order order) {
         switch (order.getSide()) {
             case sell:
-                sellLevels.remove(order);
+                remove(order, sellLevels);
                 break;
             case buy:
-                buyLevels.remove(order);
+                remove(order, buyLevels);
                 break;
+        }
+    }
+
+    private void remove(Order order, List<Order> from) {
+        synchronized (from) {
+            from.remove(order);
         }
     }
 }

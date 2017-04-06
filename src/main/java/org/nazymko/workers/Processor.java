@@ -27,6 +27,7 @@ public class Processor implements Runnable {
             } catch (Throwable any) {
                 InjectionReplacement.AGGREGATOR.onParsingError(any);
                 System.out.println(Thread.currentThread().getName() + " - parsing finished with error[ " + any.getMessage() + "]");
+                any.printStackTrace();
             }
         }
     }

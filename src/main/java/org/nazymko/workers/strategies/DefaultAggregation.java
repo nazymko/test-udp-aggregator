@@ -8,9 +8,7 @@ import org.nazymko.storage.Order;
 import org.nazymko.storage.Product;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by nazymko.patronus@gmail.com
@@ -46,15 +44,17 @@ public class DefaultAggregation implements Strategy {
         return aggregatedProduct;
     }
 
-    private HashMap<BigDecimal, Request> aggregateByPrice(List<Order> buyLevels) {
+    private HashMap<BigDecimal, Request> aggregateByPrice(List<Order> orders) {
         HashMap<BigDecimal, Request> aggregation = new HashMap<>();
-        for (Order order : buyLevels) {
-            if (!aggregation.containsKey(order.getPrice())) {
+        synchronized (orders) {
+            for (Order order : orders) {
+                if (!aggregation.containsKey(order.getPrice())) {
 
-                aggregation.put(order.getPrice(), new Request(order.getPrice(), order.getQuantity()));
-            } else {
+                    aggregation.put(order.getPrice(), new Request(order.getPrice(), order.getQuantity()));
+                } else {
 
-                aggregation.get(order.getPrice()).getQuantity().addAndGet(order.getQuantity());
+                    aggregation.get(order.getPrice()).getQuantity().addAndGet(order.getQuantity());
+                }
             }
         }
 
