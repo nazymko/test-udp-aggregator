@@ -1,20 +1,37 @@
 package org.nazymko.storage;
 
 
+import org.nazymko.InjectionReplacement;
 import org.nazymko.messages.model.in.Envelope;
 import org.nazymko.messages.model.in.Message;
 
 import java.util.HashMap;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by nazymko.patronus@gmail.com
  */
 public class Aggregator {
 
+    public void info() {
+        System.out.println(" ------------INFO-------------- ");
+        System.out.println("Products in storage    \t: " + aggregated.size());
+        System.out.println("Orders in storage      \t: " + orders.size());
+        System.out.println("UDP Messages processed \t: " + envelopeCounter.get());
+        System.out.println("UDP Messages to process\t: " + rawStorage.size());
+        System.out.println("UDP Messages with error\t: " + parsedWithError.get());
+        System.out.println(" ------------INFO-------------- ");
+    }
+
+    protected LinkedBlockingQueue<String> rawStorage = new LinkedBlockingQueue<String>();
+
     protected HashMap<String, Product> aggregated = new HashMap<String, Product>();
     protected HashMap<Long, Order> orders = new HashMap<Long, Order>();
-    protected LinkedBlockingQueue<String> rawStorage = new LinkedBlockingQueue<String>();
+    protected AtomicLong duplicateCounter = new AtomicLong(0);
+    private final Set<Long> processed = new TreeSet<>();
 
     public HashMap<String, Product> getAggregated() {
         return aggregated;
@@ -28,20 +45,67 @@ public class Aggregator {
         return rawStorage;
     }
 
-    public void consume(Envelope message) {
+    public void consume(Envelope envelope) {
 
-        for (Message msg : message.getMessages()) {
+        if (processed.contains(envelope.getInSequenceNumber())) {
+//            System.err.println("Message duplicate. Sequence id : " + envelope.getInSequenceNumber());
+            return;
+        }
+
+
+        for (Message msg : envelope.getMessages()) {
+            msg.setSequenceId(envelope.getInSequenceNumber());
+
+
             switch (msg.getType()) {
                 case addOrder:
-                    addOrderAction(msg);
+                    onAddOrder(msg);
                     break;
                 case changeOrder:
-                    changeOrderAction(msg);
+                    onChangeOrder(msg);
                     break;
                 case deleteOrder:
-                    deleteOrderAction(msg);
+                    onDeleteOrder(msg);
                     break;
             }
+        }
+
+        onConsumingDone(envelope);
+    }
+
+    private void onConsumingDone(Envelope envelope) {
+        processed.add(envelope.getInSequenceNumber());
+        envelopeCounter.incrementAndGet();
+    }
+
+    AtomicLong envelopeCounter = new AtomicLong(0);
+
+    private void onAddOrder(Message msg) {
+        if (!orders.containsKey(msg.getOrderId())) {
+            addOrderAction(msg);
+            if (InjectionReplacement.MISSED_ORDERS_STORAGE.needIt(msg.getOrderId())) {
+                InjectionReplacement.MISSED_ORDERS_STORAGE.informIncome(msg);
+            }
+        } else {
+
+//            System.err.println("Found repeated order id : " + msg.getOrderId());
+        }
+    }
+
+    private void onDeleteOrder(Message msg) {
+        if (orders.containsKey(msg.getOrderId())) {
+            deleteOrderAction(msg);
+        } else {
+            InjectionReplacement.MISSED_ORDERS_STORAGE.addDelete(msg);
+
+        }
+    }
+
+    private void onChangeOrder(Message msg) {
+        if (orders.containsKey(msg.getOrderId())) {
+            changeOrderAction(msg);
+        } else {
+            InjectionReplacement.MISSED_ORDERS_STORAGE.addChange(msg);
         }
     }
 
@@ -98,4 +162,23 @@ public class Aggregator {
 
     }
 
+    public void consumeMessage(Message m) {
+        switch (m.getType()) {
+            case addOrder:
+                onAddOrder(m);
+                break;
+            case changeOrder:
+                onChangeOrder(m);
+                break;
+            case deleteOrder:
+                onDeleteOrder(m);
+                break;
+        }
+    }
+
+    public void onParsingError(Throwable any) {
+        parsedWithError.getAndIncrement();
+    }
+
+    AtomicLong parsedWithError = new AtomicLong(0);
 }

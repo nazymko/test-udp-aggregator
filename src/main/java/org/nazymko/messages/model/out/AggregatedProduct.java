@@ -1,7 +1,8 @@
 package org.nazymko.messages.model.out;
 
-import java.util.LinkedList;
-import java.util.List;
+import org.nazymko.InjectionReplacement;
+
+import java.util.*;
 
 /**
  * Created by nazymko.patronus@gmail.com
@@ -9,24 +10,24 @@ import java.util.List;
 public class AggregatedProduct {
 
     private String productId;
-    private List<Request> buyLevels;
-    private List<Request> sellLevels;
+    private SortedSet<Request> buyLevels;
+    private SortedSet<Request> sellLevels;
 
     public AggregatedProduct(String productId) {
         this.productId = productId;
-        this.buyLevels = new LinkedList<Request>();
-        this.sellLevels = new LinkedList<Request>();
+        this.buyLevels = new TreeSet<>(InjectionReplacement.REQUEST_DESC_SORTER);
+        this.sellLevels = new TreeSet<>(InjectionReplacement.REQUEST_ASC_SORTER);
     }
 
     public String getProductId() {
         return productId;
     }
 
-    public List<Request> getBuyLevels() {
+    public Collection<Request> getBuyLevels() {
         return buyLevels;
     }
 
-    public List<Request> getSellLevels() {
+    public Collection<Request> getSellLevels() {
         return sellLevels;
     }
 

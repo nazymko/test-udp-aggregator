@@ -45,6 +45,15 @@ public class Order {
     }
 
     @Override
+    public String toString() {
+        return "Order{" +
+                "side=" + side +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return (int) (orderId ^ (orderId >>> 32));
     }

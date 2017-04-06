@@ -2,6 +2,7 @@ package org.nazymko.workers.strategies;
 
 import org.nazymko.messages.model.out.AggregatedProduct;
 import org.nazymko.messages.model.out.AggregatedResult;
+import org.nazymko.messages.model.out.Request;
 import org.nazymko.storage.Aggregator;
 import org.nazymko.storage.Order;
 import org.nazymko.storage.Product;
@@ -20,37 +21,43 @@ public class DefaultAggregation implements Strategy {
     public Object apply(Aggregator aggregator) {
         HashMap<String, Product> aggregated = aggregator.getAggregated();
 
-        ArrayList<Object> list = new ArrayList<>();
+        ArrayList<AggregatedProduct> products = new ArrayList<>();
 
         for (String productId : aggregated.keySet()) {
             Product product = aggregated.get(productId);
 
-
-            aggregate(product)
+            final AggregatedProduct aggregatedProduct = aggregate(product);
+            products.add(aggregatedProduct);
         }
 
-        new AggregatedResult()
+        return new AggregatedResult(products);
     }
 
     private AggregatedProduct aggregate(Product product) {
-        HashMap<BigDecimal, Long> priceCountMap = new HashMap<>();
+        final HashMap<BigDecimal, Request> sellAggregation = aggregateByPrice(product.getSellLevels());
+        final HashMap<BigDecimal, Request> buyAggregation = aggregateByPrice(product.getBuyLevels());
 
-        List<Order> buyLevels = product.getBuyLevels();
-        //TODO: refactor fol multithreading
-        for (Order order : buyLevels) {
-            if (!priceCountMap.containsKey(order.getPrice())) {
 
-                priceCountMap.put(order.getPrice(), order.getQuantity());
-            } else {
-
-                Long quantity = priceCountMap.get(order.getPrice());
-                priceCountMap.put(order.getPrice(), order.getQuantity() + quantity);
-            }
-
-        }
         AggregatedProduct aggregatedProduct = new AggregatedProduct(product.getProductId());
 
+        aggregatedProduct.getBuyLevels().addAll(buyAggregation.values());
+        aggregatedProduct.getSellLevels().addAll(sellAggregation.values());
 
         return aggregatedProduct;
+    }
+
+    private HashMap<BigDecimal, Request> aggregateByPrice(List<Order> buyLevels) {
+        HashMap<BigDecimal, Request> aggregation = new HashMap<>();
+        for (Order order : buyLevels) {
+            if (!aggregation.containsKey(order.getPrice())) {
+
+                aggregation.put(order.getPrice(), new Request(order.getPrice(), order.getQuantity()));
+            } else {
+
+                aggregation.get(order.getPrice()).getQuantity().addAndGet(order.getQuantity());
+            }
+        }
+
+        return aggregation;
     }
 }

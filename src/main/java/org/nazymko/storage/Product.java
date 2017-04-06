@@ -1,6 +1,5 @@
 package org.nazymko.storage;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 

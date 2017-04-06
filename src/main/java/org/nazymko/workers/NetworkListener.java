@@ -9,7 +9,7 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 
 /**
- * Created by a.nazimko on 05.04.2017.
+ * Created by nazymko.patronus@gmail.com
  */
 public class NetworkListener implements Runnable {
 

@@ -7,11 +7,20 @@ import java.math.BigDecimal;
  */
 public class Message {
     private Type type;
-    private long orderId;
+    private Long orderId;
     private String productId;
     private Side side;
     private BigDecimal price;
-    private long quantity;
+    private Long quantity;
+    private transient long sequenceId;
+
+    public long getSequenceId() {
+        return sequenceId;
+    }
+
+    public void setSequenceId(long sequenceId) {
+        this.sequenceId = sequenceId;
+    }
 
     public Type getType() {
         return type;
@@ -31,6 +40,18 @@ public class Message {
 
     public BigDecimal getPrice() {
         return price;
+    }
+
+    public Message() {
+    }
+
+    public Message(Type type, Long orderId, String productId, Side side, BigDecimal price, Long quantity) {
+        this.type = type;
+        this.orderId = orderId;
+        this.productId = productId;
+        this.side = side;
+        this.price = price;
+        this.quantity = quantity;
     }
 
     public long getQuantity() {

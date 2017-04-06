@@ -10,6 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class Processor implements Runnable {
 
+
     @Override
     public void run() {
 
@@ -19,13 +20,12 @@ public class Processor implements Runnable {
             try {
                 String message = rawStorage.take();
 
-                System.out.println(Thread.currentThread().getName() + " - parsing started");
                 Envelope envelope = InjectionReplacement.GSON.fromJson(message, Envelope.class);
-
                 InjectionReplacement.AGGREGATOR.consume(envelope);
-                System.out.println(Thread.currentThread().getName() + " - parsing finished");
+
 
             } catch (Throwable any) {
+                InjectionReplacement.AGGREGATOR.onParsingError(any);
                 System.out.println(Thread.currentThread().getName() + " - parsing finished with error[ " + any.getMessage() + "]");
             }
         }

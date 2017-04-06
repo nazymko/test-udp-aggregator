@@ -10,7 +10,7 @@ import java.net.*;
 import static org.junit.Assert.*;
 
 /**
- * Created by a.nazimko on 05.04.2017.
+ * Created by nazymko.patronus@gmail.com
  */
 public class NetworkListenerTest {
 
@@ -28,8 +28,9 @@ public class NetworkListenerTest {
                         Config.PORT
                 ));
 
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
     }
+
 
 }
