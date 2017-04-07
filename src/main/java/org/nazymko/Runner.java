@@ -5,6 +5,7 @@ import org.nazymko.workers.InfoLogger;
 import org.nazymko.workers.NetworkListener;
 import org.nazymko.workers.Processor;
 
+import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
@@ -20,7 +21,9 @@ public class Runner {
         this.processorThreadCount = processorThreadCount;
     }
 
-    public void start() throws SocketException {
+    public void start() throws IOException {
+        System.out.print("Press Enter to exit");
+
 
         socket = new DatagramSocket(Config.PORT);
         InjectionReplacement.EXECUTOR.submit(new NetworkListener(socket));
@@ -31,6 +34,7 @@ public class Runner {
         InjectionReplacement.EXECUTOR.submit(new InfoLogger());
         InjectionReplacement.EXECUTOR.submit(new DataProducer(new DatagramSocket(Config.OUT_PORT)));
 
+        System.in.read();
     }
 
     public DatagramSocket getSocket() {

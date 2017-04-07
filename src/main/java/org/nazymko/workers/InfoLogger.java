@@ -4,6 +4,7 @@ import org.nazymko.InjectionReplacement;
 import org.nazymko.storage.MetricsHolder;
 
 import java.util.LinkedList;
+import java.util.OptionalLong;
 
 /**
  * Created by nazymko.patronus@gmail.com
@@ -41,21 +42,34 @@ public class InfoLogger implements Runnable {
         }
 
         long sum = copy.stream().mapToLong(MetricsHolder.NetworkMetric::getProcessed).sum();
-        long min = copy.stream().mapToLong(MetricsHolder.NetworkMetric::getProcessed).min().getAsLong();
-        long max = copy.stream().mapToLong(MetricsHolder.NetworkMetric::getProcessed).max().getAsLong();
+
+        long min = getOptional(copy.stream().mapToLong(MetricsHolder.NetworkMetric::getProcessed).min());
+        long max = getOptional(copy.stream().mapToLong(MetricsHolder.NetworkMetric::getProcessed).max());
 
 
-        long averageProcessingTime = sum / copy.size();
+        long averageProcessingTime;
 
+        if (copy.isEmpty()) {
+            averageProcessingTime = -1;
+        } else {
+            averageProcessingTime = sum / copy.size();
+        }
         String PROCESSING_METRICS = new StringBuilder()
                 .append("---------------------METRICS-----------------------\n")
                 .append("Elements processed      :").append(copy.size()).append("\n")
-                .append("Average processing time :").append(averageProcessingTime).append("ns.\n")
+                .append("Average processing time :").append(averageProcessingTime).append(" ns.\n")
                 .append("Minimal processing time :").append(min).append(" ns.\n")
-                .append("Maximal processing time :").append(max).append("ns.\n")
+                .append("Maximal processing time :").append(max).append(" ns.\n")
                 .append("---------------------METRICS-----------------------").append("\n").toString();
 
         System.out.println(PROCESSING_METRICS);
+    }
+
+    private long getOptional(OptionalLong optional) {
+        if (optional.isPresent()) {
+            return optional.getAsLong();
+        }
+        return -1;
     }
 
     private void printInfo() {

@@ -15,7 +15,7 @@ public class NetworkListenerTest {
     @Test
     public void testIt() throws IOException, InterruptedException {
 
-        Runner runner = new Runner();
+        Runner runner = new Runner(2);
         runner.start();
 
         runner.getSocket().send(
