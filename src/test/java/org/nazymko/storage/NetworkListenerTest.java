@@ -7,8 +7,6 @@ import org.nazymko.Runner;
 import java.io.IOException;
 import java.net.*;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by nazymko.patronus@gmail.com
  */
@@ -18,7 +16,7 @@ public class NetworkListenerTest {
     public void testIt() throws IOException, InterruptedException {
 
         Runner runner = new Runner();
-        runner.run();
+        runner.start();
 
         runner.getSocket().send(
                 new DatagramPacket(

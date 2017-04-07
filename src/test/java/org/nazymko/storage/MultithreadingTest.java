@@ -1,12 +1,9 @@
 package org.nazymko.storage;
 
 import org.junit.Test;
-import org.nazymko.Config;
 import org.nazymko.Runner;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
 
 /**
  * Created by nazymko.patronus@gmail.com
@@ -16,16 +13,9 @@ public class MultithreadingTest {
     @Test
     public void testIt() throws IOException, InterruptedException {
 
-        final Runner runner = new Runner();
-        runner.run();
+        Runner runner = new Runner(3);
+        runner.start();
 
-        runner.getSocket().send(
-                new DatagramPacket(
-                        TestConstants.INCOME_MESSAGE.getBytes(),
-                        TestConstants.INCOME_MESSAGE.getBytes().length,
-                        InetAddress.getLocalHost(),
-                        Config.PORT
-                ));
 
 
         startSender(runner);

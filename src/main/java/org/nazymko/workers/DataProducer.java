@@ -70,11 +70,11 @@ public class DataProducer implements Runnable {
                 }
             } else {
                 final long timeGoneFromLastExecution = System.currentTimeMillis() - checkPoint;
-                System.out.println(timeNow() + "Accidentally waking up early");
+                System.out.println(timeNow() + "Accidentally waked up early");
 
                 final long timeToWait = INTERVAL - timeGoneFromLastExecution;
 
-                System.out.println(timeNow() + "Sleep for " + timeToWait + " ms");
+                System.out.println(timeNow() + "Sleep again for " + timeToWait + " ms");
 
                 if (timeToWait > 0) {
                     Thread.sleep(timeToWait);
@@ -98,7 +98,7 @@ public class DataProducer implements Runnable {
 
     private void safeSend(byte[] dataToSend) throws IOException {
         try {
-            if (dataToSend.length < (1024 * 64) - 1) {
+            if (dataToSend.length < (1024 * 64) - 28) {
                 out.send(
                         new DatagramPacket(
                                 dataToSend,

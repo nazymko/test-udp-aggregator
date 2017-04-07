@@ -13,19 +13,22 @@ import java.net.SocketException;
  */
 public class Runner {
     private DatagramSocket socket;
+    private int processorThreadCount;
 
-    public void run() throws SocketException {
+    public Runner(int processorThreadCount) {
+
+        this.processorThreadCount = processorThreadCount;
+    }
+
+    public void start() throws SocketException {
 
         socket = new DatagramSocket(Config.PORT);
         InjectionReplacement.EXECUTOR.submit(new NetworkListener(socket));
+        for (int i = 0; i < processorThreadCount; i++) {
+            InjectionReplacement.EXECUTOR.submit(new Processor());
 
-        InjectionReplacement.EXECUTOR.submit(new Processor());
-        InjectionReplacement.EXECUTOR.submit(new Processor());
-        InjectionReplacement.EXECUTOR.submit(new Processor());
-        InjectionReplacement.EXECUTOR.submit(new Processor());
-
+        }
         InjectionReplacement.EXECUTOR.submit(new InfoLogger());
-
         InjectionReplacement.EXECUTOR.submit(new DataProducer(new DatagramSocket(Config.OUT_PORT)));
 
     }
